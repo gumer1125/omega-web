@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pl" class="no-js">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zaawansowane strony WWW. Czysty kod. Neonowy Design.">
+    <meta name="theme-color" content="#00FFA3">
+    
+    <!-- Dynamic Title (JS obsłuży zmianę) -->
+    <title>OMEGA | Loading...</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    
+    <!-- Libraries (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'neon': '#00FFA3',
+                        'void': '#050505',
+                        'charcoal': '#0F0F0F',
+                        'paper': '#F5F5F7'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Syne', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    cursor: {
+                        'none': 'none',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-void text-white overflow-x-hidden cursor-none antialiased selection:bg-neon selection:text-black">
+
+
+
+    <!-- 1. PRELOADER -->
+    <div id="preloader" class="fixed inset-0 z-[100] bg-void flex flex-col items-center justify-center">
+        <div class="font-mono text-neon text-xl mb-4">INITIALIZING SYSTEM... <span id="percent">0%</span></div>
+        <div class="w-64 h-1 bg-white/10 rounded-full overflow-hidden">
+            <div id="progress-bar" class="h-full bg-neon w-0 transition-all duration-100"></div>
+        </div>
+    </div>
+
+    <!-- 2. CUSTOM CURSOR -->
+    <div class="cursor-dot hidden md:block"></div>
+    <div class="cursor-outline hidden md:block"></div>
+
+    <!-- 3. NOISE OVERLAY -->
+    <div class="noise-overlay fixed inset-0 z-[90] pointer-events-none opacity-[0.03]"></div>
+
+    <!-- 4. SCROLL PROGRESS (Top) -->
+    <div class="fixed top-0 left-0 h-1 bg-neon z-[99]" id="scrollProgress" style="width: 0%"></div>
+
+    <!-- 5. CMD+K MODAL (Search) -->
+    <div id="cmdModal" class="fixed inset-0 z-[98] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-charcoal border border-white/10 w-full max-w-lg rounded-xl p-6 shadow-2xl transform scale-95 opacity-0 transition-all" id="cmdContent">
+            <div class="flex items-center gap-4 border-b border-white/10 pb-4 mb-4">
+                <i class="ph-bold ph-magnifying-glass text-xl text-gray-400"></i>
+                <input type="text" placeholder="Szukaj... (np. 'Cennik', 'Kontakt')" class="bg-transparent w-full focus:outline-none text-lg">
+                <span class="text-xs bg-white/10 px-2 py-1 rounded text-gray-400">ESC</span>
+            </div>
+            <div class="space-y-2 text-sm text-gray-400">
+                <a href="#portfolio" class="block p-3 hover:bg-white/5 rounded flex justify-between group">
+                    <span>📂 Realizacje</span>
+                    <i class="ph-bold ph-arrow-right opacity-0 group-hover:opacity-100"></i>
+                </a>
+                <a href="#calculator" class="block p-3 hover:bg-white/5 rounded flex justify-between group">
+                    <span>💰 Kalkulator</span>
+                    <i class="ph-bold ph-arrow-right opacity-0 group-hover:opacity-100"></i>
+                </a>
+                <a href="#contact" class="block p-3 hover:bg-white/5 rounded flex justify-between group">
+                    <span>📞 Kontakt</span>
+                    <i class="ph-bold ph-arrow-right opacity-0 group-hover:opacity-100"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-50 mix-blend-difference text-white py-6">
+        <div class="max-w-[1600px] mx-auto px-6 flex justify-between items-center">
+            <a href="#" class="text-2xl font-display font-bold tracking-tighter hover-trigger">OMEGA<span class="text-neon">.</span></a>           
+			<div class="hidden md:flex gap-8 font-mono text-xs uppercase tracking-widest">
+				<a href="index.html" class="text-neon">Start</a>
+				<a href="onas.html" class="hover:text-neon transition-colors">O Nas</a>
+				<a href="przyk.html" class="hover:text-neon transition-colors">Realizacje</a>
+			</div>
+
+  
+
+            <div class="flex items-center gap-4">
+                <!-- Invert Toggle -->
+                <button id="contrastToggle" class="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                    <i class="ph-bold ph-sun-dim"></i>
+                </button>
+                <a href="#calculator" class="px-6 py-2 border border-white/30 rounded-full text-xs font-bold uppercase hover:bg-neon hover:text-black hover:border-neon transition-all">
+                    Wycena
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION with CANVAS BG -->
+    <header class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <!-- Canvas Background -->
+        <canvas id="heroCanvas" class="absolute inset-0 z-0 opacity-40"></canvas>
+
+        <div class="relative z-10 text-center max-w-5xl px-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neon/30 bg-neon/5 text-neon text-xs font-mono mb-8 animate-pulse">
+                <span class="w-2 h-2 rounded-full bg-neon"></span>
+                SYSTEM ONLINE
+            </div>
+            
+            <!-- Glitch Effect Text -->
+            <h1 class="glitch-wrapper font-display font-bold text-6xl md:text-9xl mb-6 leading-[0.9]" data-text="FUTURE WEB">
+                FUTURE WEB
+            </h1>
+            
+            <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-light reveal-text">
+                Brutalna wydajność. Kodowanie bez kompromisów. Tworzymy strony, które dominują w sieci i sprzedają, gdy Ty śpisz.
+            </p>
+
+            <div class="flex flex-col md:flex-row justify-center gap-6">
+                <a href="#calculator" class="group relative px-8 py-4 bg-neon text-black font-bold text-lg overflow-hidden hover-trigger">
+                    <span class="relative z-10">ROZPOCZNIJ PROJEKT</span>
+                    <div class="absolute inset-0 bg-white transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300"></div>
+                </a>
+                <button onclick="openVideo()" class="flex items-center gap-3 px-8 py-4 border border-white/20 hover:border-white transition-all hover-trigger">
+                    <i class="ph-fill ph-play-circle text-2xl"></i>
+                    <span>Showreel 2025</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Scroll Down Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
+            <span class="text-[10px] uppercase tracking-widest">Scroll</span>
+            <div class="w-[1px] h-12 bg-gradient-to-b from-neon to-transparent"></div>
+        </div>
+    </header>
+
+    <!-- MARQUEE (Infinite Scroll) -->
+    <div class="py-6 border-y border-white/10 bg-black overflow-hidden relative z-20">
+        <div class="marquee-track flex gap-12 font-display text-4xl text-transparent stroke-text whitespace-nowrap">
+             <span>DEVELOPMENT • DESIGN • SEO • SECURITY • VPS • WORDPRESS • REACT • GSAP •</span>
+             <span>DEVELOPMENT • DESIGN • SEO • SECURITY • VPS • WORDPRESS • REACT • GSAP •</span>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-[1600px] mx-auto px-6 relative z-10">
+
+        <!-- LOGOS (Social Proof) -->
+        <section class="py-20 border-b border-white/10 opacity-60 hover:opacity-100 transition-opacity duration-500">
+            <p class="text-center text-xs text-gray-500 uppercase tracking-widest mb-10">Zaufali nam:</p>
+            <div class="flex flex-wrap justify-center gap-12 md:gap-24 grayscale">
+                <!-- Placeholdery Logotypów -->
+                <div class="text-2xl font-bold font-display">GOOGLE</div>
+                <div class="text-2xl font-bold font-display">MICROSOFT</div>
+                <div class="text-2xl font-bold font-display">SPOTIFY</div>
+                <div class="text-2xl font-bold font-display">TESLA</div>
+            </div>
+        </section>
+
+        <!-- VS TABLE (Comparison) -->
+        <section class="py-32">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+                <div>
+                    <h2 class="text-5xl font-display font-bold mb-6">My vs <br><span class="text-gray-600">Reszta Świata</span></h2>
+                    <p class="text-gray-400">Dlaczego warto przepłacić? Bo tanie strony to kosztowne problemy w przyszłości.</p>
+                </div>
+                <div class="bg-charcoal border border-white/10 p-8 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-neon/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="text-gray-500 border-b border-white/10">
+                                <th class="pb-4">Cecha</th>
+                                <th class="pb-4 text-neon">OMEGA</th>
+                                <th class="pb-4 text-gray-600">Freelancer</th>
+                            </tr>
+                        </thead>
+                        <tbody class="font-mono">
+                            <tr class="border-b border-white/5">
+                                <td class="py-4">Technologia</td>
+                                <td class="py-4 text-white">Custom Code</td>
+                                <td class="py-4 text-gray-500">Gotowy szablon</td>
+                            </tr>
+                            <tr class="border-b border-white/5">
+                                <td class="py-4">Szybkość</td>
+                                <td class="py-4 text-white">99/100 Google</td>
+                                <td class="py-4 text-gray-500">Losowa</td>
+                            </tr>
+                            <tr class="border-b border-white/5">
+                                <td class="py-4">Bezpieczeństwo</td>
+                                <td class="py-4 text-white">VPS + WAF</td>
+                                <td class="py-4 text-gray-500">Brak</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4">Wsparcie</td>
+                                <td class="py-4 text-white">24/7 Priority</td>
+                                <td class="py-4 text-gray-500">Kiedy odpisze</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TIMELINE (Process) -->
+        <section class="py-20 border-t border-white/10">
+            <h2 class="text-xs font-bold uppercase tracking-widest text-neon mb-16">Proces Realizacji</h2>
+            <div class="relative border-l border-white/10 ml-4 md:ml-0 md:border-l-0 md:border-t md:flex justify-between pt-8 md:pl-0 pl-8 space-y-12 md:space-y-0">
+                
+                <!-- Step 1 -->
+                <div class="relative group w-full">
+                    <div class="absolute -left-[37px] top-0 w-4 h-4 bg-void border-2 border-neon rounded-full md:-top-[39px] md:left-0 transition-transform group-hover:scale-150"></div>
+                    <span class="text-4xl font-display font-bold text-gray-700 group-hover:text-white transition-colors">01</span>
+                    <h3 class="text-xl font-bold mt-2">Strategia</h3>
+                    <p class="text-sm text-gray-500 mt-2 pr-4">Analiza konkurencji, brief, ustalenie celów biznesowych.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative group w-full">
+                    <div class="absolute -left-[37px] top-0 w-4 h-4 bg-void border-2 border-gray-700 rounded-full md:-top-[39px] md:left-0 group-hover:border-neon transition-all"></div>
+                    <span class="text-4xl font-display font-bold text-gray-700 group-hover:text-white transition-colors">02</span>
+                    <h3 class="text-xl font-bold mt-2">Design</h3>
+                    <p class="text-sm text-gray-500 mt-2 pr-4">Makiety UX/UI, akceptacja wizualna, prototypowanie.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative group w-full">
+                    <div class="absolute -left-[37px] top-0 w-4 h-4 bg-void border-2 border-gray-700 rounded-full md:-top-[39px] md:left-0 group-hover:border-neon transition-all"></div>
+                    <span class="text-4xl font-display font-bold text-gray-700 group-hover:text-white transition-colors">03</span>
+                    <h3 class="text-xl font-bold mt-2">Dev</h3>
+                    <p class="text-sm text-gray-500 mt-2 pr-4">Pisanie kodu, CMS, integracje, optymalizacja SEO.</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="relative group w-full">
+                    <div class="absolute -left-[37px] top-0 w-4 h-4 bg-void border-2 border-gray-700 rounded-full md:-top-[39px] md:left-0 group-hover:border-neon transition-all"></div>
+                    <span class="text-4xl font-display font-bold text-gray-700 group-hover:text-white transition-colors">04</span>
+                    <h3 class="text-xl font-bold mt-2">Launch</h3>
+                    <p class="text-sm text-gray-500 mt-2 pr-4">Konfiguracja serwera, testy, szkolenie z obsługi.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- PORTFOLIO WITH MODAL -->
+        <section id="portfolio" class="py-32">
+            <h2 class="text-6xl font-display font-bold mb-16">Selected <span class="text-stroke">Works</span></h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Item 1 -->
+                <div class="group relative cursor-pointer" onclick="openProject('noir')">
+                    <div class="aspect-[4/3] overflow-hidden bg-charcoal relative">
+                        <!-- Skeleton Loader (Visual only) -->
+                        <div class="absolute inset-0 bg-white/5 animate-pulse z-0"></div>
+                        <img src="https://images.unsplash.com/photo-1481487484168-9b995ecc1679?q=80&w=1000&auto=format&fit=crop" loading="lazy" class="relative z-10 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 z-20 bg-black/50 group-hover:opacity-0 transition-opacity"></div>
+                        
+                        <!-- Hover Badge -->
+                        <div class="absolute top-4 right-4 bg-neon text-black px-3 py-1 font-bold text-xs opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                            ZOBACZ CASE STUDY
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <div>
+                            <h3 class="text-2xl font-bold">Noir Boutique</h3>
+                            <p class="text-gray-500 text-sm">E-commerce / WebGL</p>
+                        </div>
+                        <i class="ph-bold ph-arrow-up-right text-2xl text-neon opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all"></i>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="group relative cursor-pointer md:mt-24" onclick="openProject('arch')">
+                    <div class="aspect-[4/3] overflow-hidden bg-charcoal relative">
+                         <div class="absolute inset-0 bg-white/5 animate-pulse z-0"></div>
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1000&auto=format&fit=crop" loading="lazy" class="relative z-10 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                         <div class="absolute inset-0 z-20 bg-black/50 group-hover:opacity-0 transition-opacity"></div>
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <div>
+                            <h3 class="text-2xl font-bold">Arch Studio</h3>
+                            <p class="text-gray-500 text-sm">Portfolio / Minimal</p>
+                        </div>
+                        <i class="ph-bold ph-arrow-up-right text-2xl text-neon opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CALCULATOR & ORDER (The Core) -->
+        <section id="calculator" class="py-32 border-t border-white/10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                
+                <!-- LEFT: FORM -->
+                <div class="lg:col-span-8">
+                    <h2 class="text-5xl font-display font-bold mb-4">Konfigurator</h2>
+                    <p class="text-gray-400 mb-12">Wypełnij, aby otrzymać precyzyjną wycenę PDF.</p>
+
+                    <form id="omegaForm" class="space-y-12">
+                        <!-- Honeypot (Anti-Spam) -->
+                        <input type="text" name="website_url" style="display:none !important" tabindex="-1" autocomplete="off">
+
+                        <!-- Step 1: Typ -->
+                        <div class="form-group">
+                            <label class="block text-neon text-xs font-bold uppercase tracking-widest mb-4">01. Typ Projektu</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <label class="cursor-pointer hover-trigger">
+                                    <input type="radio" name="projectType" value="landing" data-price="2000" class="peer sr-only" checked>
+                                    <div class="border border-white/10 p-6 rounded hover:bg-white/5 peer-checked:border-neon peer-checked:bg-neon/10 transition-all">
+                                        <i class="ph-duotone ph-rocket text-3xl mb-3 text-gray-400 peer-checked:text-neon"></i>
+                                        <div class="font-bold">Landing Page</div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer hover-trigger">
+                                    <input type="radio" name="projectType" value="business" data-price="4500" class="peer sr-only">
+                                    <div class="border border-white/10 p-6 rounded hover:bg-white/5 peer-checked:border-neon peer-checked:bg-neon/10 transition-all">
+                                        <i class="ph-duotone ph-buildings text-3xl mb-3 text-gray-400 peer-checked:text-neon"></i>
+                                        <div class="font-bold">Strona Firmowa</div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer hover-trigger">
+                                    <input type="radio" name="projectType" value="ecommerce" data-price="8000" class="peer sr-only">
+                                    <div class="border border-white/10 p-6 rounded hover:bg-white/5 peer-checked:border-neon peer-checked:bg-neon/10 transition-all">
+                                        <i class="ph-duotone ph-shopping-bag text-3xl mb-3 text-gray-400 peer-checked:text-neon"></i>
+                                        <div class="font-bold">E-Commerce</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Dodatki -->
+                        <div class="form-group">
+                            <label class="block text-neon text-xs font-bold uppercase tracking-widest mb-4">02. Stack Technologiczny</label>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <label class="cursor-pointer hover-trigger">
+                                    <input type="checkbox" name="addon" value="cms" data-price="1000" class="peer sr-only">
+                                    <div class="border border-white/10 px-4 py-3 text-sm text-center text-gray-400 rounded peer-checked:bg-neon peer-checked:text-black peer-checked:font-bold transition-all">
+                                        CMS Panel
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer hover-trigger">
+                                    <input type="checkbox" name="addon" value="seo" data-price="500" class="peer sr-only">
+                                    <div class="border border-white/10 px-4 py-3 text-sm text-center text-gray-400 rounded peer-checked:bg-neon peer-checked:text-black peer-checked:font-bold transition-all">
+                                        SEO Pack
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer hover-trigger">
+                                    <input type="checkbox" name="addon" value="copy" data-price="800" class="peer sr-only">
+                                    <div class="border border-white/10 px-4 py-3 text-sm text-center text-gray-400 rounded peer-checked:bg-neon peer-checked:text-black peer-checked:font-bold transition-all">
+                                        Copywriting
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer hover-trigger">
+                                    <input type="checkbox" name="addon" value="logo" data-price="1200" class="peer sr-only">
+                                    <div class="border border-white/10 px-4 py-3 text-sm text-center text-gray-400 rounded peer-checked:bg-neon peer-checked:text-black peer-checked:font-bold transition-all">
+                                        Logo Design
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Dane -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <input type="email" placeholder="Twój E-mail" required class="bg-charcoal border border-white/10 p-4 rounded focus:border-neon focus:outline-none focus:ring-1 focus:ring-neon transition-all w-full">
+                            <button type="submit" class="w-full bg-white text-black font-bold uppercase tracking-widest py-4 rounded hover:bg-neon transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_20px_rgba(0,255,163,0.4)]">
+                                Generuj Ofertę
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- RIGHT: STICKY SUMMARY -->
+                <div class="lg:col-span-4">
+                    <div class="sticky top-32 p-8 border border-white/10 bg-charcoal/50 backdrop-blur-md rounded-2xl">
+                        <h3 class="font-bold text-xl mb-6">Podsumowanie</h3>
+                        <div class="space-y-4 text-sm text-gray-400 border-b border-white/10 pb-6 mb-6">
+                            <div class="flex justify-between">
+                                <span>Typ:</span>
+                                <span class="text-white" id="summaryType">Landing Page</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Czas realizacji:</span>
+                                <span class="text-white">~14 Dni</span>
+                            </div>
+                            <div id="addonsList" class="flex flex-col gap-1 text-xs pt-2">
+                                <!-- JS wstawia tu dodatki -->
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-end">
+                            <span class="text-xs uppercase tracking-widest">Estymacja</span>
+                            <span class="text-3xl font-bold text-neon" id="totalPrice">2000 PLN</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FAQ ACCORDION -->
+        <section id="faq" class="py-20 max-w-3xl mx-auto">
+            <h2 class="text-center text-3xl font-display font-bold mb-12">Częste Pytania</h2>
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="border border-white/10 rounded-lg overflow-hidden faq-item cursor-pointer hover:border-white/30 transition-colors bg-charcoal">
+                    <div class="p-6 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <span class="font-bold">Czy otrzymam fakturę VAT?</span>
+                        <i class="ph-bold ph-plus transition-transform duration-300"></i>
+                    </div>
+                    <div class="px-6 pb-0 h-0 overflow-hidden transition-all duration-300 content text-gray-400 text-sm">
+                        <div class="pb-6">Tak, oczywiście. Do każdego zlecenia wystawiamy pełną fakturę VAT 23%. Jesteśmy legalnie działającą agencją.</div>
+                    </div>
+                </div>
+                 <!-- FAQ Item 2 -->
+                 <div class="border border-white/10 rounded-lg overflow-hidden faq-item cursor-pointer hover:border-white/30 transition-colors bg-charcoal">
+                    <div class="p-6 flex justify-between items-center" onclick="toggleFaq(this)">
+                        <span class="font-bold">Czy strona będzie szybka?</span>
+                        <i class="ph-bold ph-plus transition-transform duration-300"></i>
+                    </div>
+                    <div class="px-6 pb-0 h-0 overflow-hidden transition-all duration-300 content text-gray-400 text-sm">
+                        <div class="pb-6">Tak. Optymalizujemy kod pod Google PageSpeed Insights, celując w wyniki 95-100 pkt. Używamy formatów WebP i leniwego ładowania.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MEGA FOOTER -->
+    <footer class="bg-charcoal border-t border-white/10 pt-20 pb-6 mt-20">
+        <div class="max-w-[1600px] mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-1 md:col-span-2">
+                    <a href="#" class="text-3xl font-display font-bold">OMEGA.</a>
+                    <p class="mt-4 text-gray-500 max-w-xs text-sm">Tworzymy cyfrową przyszłość Twojego biznesu. Bez kompromisów jakościowych.</p>
+                    
+                    <!-- Newsletter Simulation -->
+                    <div class="mt-8 flex gap-2">
+                        <input type="email" placeholder="Zapisz się na Tech News" class="bg-black border border-white/10 px-4 py-2 text-sm rounded focus:border-neon focus:outline-none">
+                        <button class="bg-white text-black px-4 py-2 rounded text-sm font-bold hover:bg-neon transition-colors">OK</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Menu</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-white">Start</a></li>
+                        <li><a href="#portfolio" class="hover:text-white">Portfolio</a></li>
+                        <li><a href="#calculator" class="hover:text-white">Wycena</a></li>
+                        <li><a href="#" class="hover:text-white">Regulamin</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Kontakt</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li class="flex items-center gap-2 cursor-pointer hover:text-neon" onclick="copyToClipboard('hello@omega.com')">
+                            <i class="ph-bold ph-envelope"></i> hello@omega.com
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="ph-bold ph-phone"></i> +48 123 456 789
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="ph-bold ph-map-pin"></i> Warszawa, Centrum
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/5 pt-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
+                <p>&copy; 2025 Omega Digital. All rights reserved.</p>
+                
+                <!-- Terminal-style cookie notice trigger -->
+                <button onclick="document.getElementById('cookieConsole').classList.toggle('hidden')" class="hover:text-white mt-2 md:mt-0">[ COOKIE_SETTINGS ]</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FIXED ELEMENTS & MODALS -->
+    
+    <!-- 1. Live Chat Button -->
+    <div class="fixed bottom-8 right-8 z-40">
+        <button class="w-14 h-14 bg-neon rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(0,255,163,0.4)] hover:scale-110 transition-transform text-black">
+            <i class="ph-bold ph-chat-teardrop-text text-2xl"></i>
+        </button>
+    </div>
+
+    <!-- 2. Cookie Console -->
+    <div id="cookieConsole" class="fixed bottom-4 left-4 z-50 bg-black border border-neon p-4 font-mono text-xs max-w-sm shadow-2xl hidden">
+        <div class="text-neon mb-2">> DETECTED_NEW_USER</div>
+        <p class="text-gray-300 mb-4">This site uses cookies to enhance system performance. Accept?</p>
+        <div class="flex gap-4">
+            <button onclick="this.parentElement.parentElement.remove()" class="text-white hover:text-neon hover:underline">[Y] ACCEPT</button>
+            <button onclick="this.parentElement.parentElement.remove()" class="text-gray-500 hover:text-white hover:underline">[N] DECLINE</button>
+        </div>
+    </div>
+
+    <!-- 3. Case Study Modal (Hidden) -->
+    <div id="projectModal" class="fixed inset-0 z-[100] bg-void/95 backdrop-blur hidden overflow-y-auto">
+        <button onclick="closeProject()" class="fixed top-6 right-6 text-white hover:text-neon z-[101]">
+            <i class="ph-bold ph-x text-3xl"></i>
+        </button>
+        <div class="max-w-4xl mx-auto p-12 mt-12">
+            <h2 class="text-4xl font-bold mb-4" id="modalTitle">Project Title</h2>
+            <div class="w-full h-64 bg-gray-800 mb-8 rounded-lg animate-pulse" id="modalImage"></div>
+            <p class="text-gray-400 leading-relaxed mb-8">
+                Pełny opis wdrożenia. Zastosowaliśmy architekturę JAMstack dla maksymalnej wydajności.
+                Backend oparty o Node.js, frontend w React. Wynik Google Speed: 100/100.
+            </p>
+            <div class="grid grid-cols-2 gap-4 text-sm font-mono border-t border-white/10 pt-8">
+                <div>Klient: <span class="text-white">Confidential</span></div>
+                <div>Rok: <span class="text-white">2024</span></div>
+                <div>Usługi: <span class="text-white">Design, Dev, SEO</span></div>
+                <div>Tech: <span class="text-neon">React, Tailwind</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>

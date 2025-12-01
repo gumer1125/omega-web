@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMEGA | O Nas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 'neon': '#00FFA3', 'void': '#050505', 'charcoal': '#0F0F0F' },
+                    fontFamily: { sans: ['Inter'], display: ['Syne'], mono: ['JetBrains Mono'] },
+                    cursor: { 'none': 'none' }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-void text-white cursor-none selection:bg-neon selection:text-black">
+
+    <!-- PAGE TRANSITION -->
+    <div id="transition-container" class="fixed inset-0 z-[9999] pointer-events-none flex">
+		<div class="transition-bar"></div>
+		<div class="transition-bar"></div>
+		<div class="transition-bar"></div>
+		<div class="transition-bar"></div>
+		<div class="transition-bar"></div>
+	</div>
+
+    <!-- KURSOR -->
+    <div class="cursor-dot hidden md:block"></div>
+    <div class="cursor-outline hidden md:block"></div>
+
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-50 mix-blend-difference text-white py-6">
+        <div class="max-w-[1600px] mx-auto px-6 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-display font-bold tracking-tighter hover-trigger">OMEGA<span class="text-neon">.</span></a>
+            <div class="flex gap-8 font-mono text-xs uppercase tracking-widest">
+                <a href="index.html" class="hover:text-neon transition-colors">Start</a>
+                <a href="onas.html" class="text-neon">O Nas</a>
+                <a href="przyk.html" class="hover:text-neon transition-colors">Realizacje</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO ABOUT -->
+    <header class="pt-40 pb-20 px-6 max-w-[1600px] mx-auto">
+        <p class="text-neon font-mono text-xs mb-4">/// TWO_CORE_UNITS</p>
+        <h1 class="text-5xl md:text-7xl font-display font-bold mb-12 leading-tight">
+            Mniej ludzi. <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-600">Więcej jakości.</span>
+        </h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-gray-400 text-lg leading-relaxed font-light">
+            <p>
+                Jesteśmy duetem dwóch młodych programistów, którzy skupiają się na jakości. Dzięki małemu zespołowi jesteśmy w stanie zadbać o najmniejszy szczegół bez nieporozumień.
+            </p>
+            <p>
+                Zero pośredników, zero "account managerów" i głuchego telefonu. Tylko bezpośredni kontakt z twórcami kodu i czysta realizacja wizji.
+            </p>
+        </div>
+    </header>
+
+    <!-- TEAM SECTION (Wyrównane) -->
+    <section class="py-20 px-6 max-w-[1600px] mx-auto border-t border-white/10">
+        <h2 class="text-4xl font-display font-bold mb-16">The Team</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl">
+            
+            <!-- Member 1 -->
+            <div class="group relative hover-trigger">
+                <div class="aspect-[3/4] overflow-hidden bg-charcoal grayscale group-hover:grayscale-0 transition-all duration-500 border border-white/10">
+                    <!-- ZMIEŃ SRC NA SWOJE ZDJĘCIE -->
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover">
+                </div>
+                <div class="mt-6">
+                    <h3 class="text-2xl font-bold font-display">Kacper <span class="text-neon">Dev</span></h3>
+                    <p class="text-xs font-mono text-gray-500 mt-1">FULLSTACK DEVELOPER</p>
+                    <p class="text-sm text-gray-400 mt-4 leading-relaxed">Specjalista od backendu. Dba o to, by każda linijka kodu była zoptymalizowana.</p>
+                </div>
+            </div>
+
+            <!-- Member 2 (Usunięto 'md:mt-24', teraz są równo) -->
+            <div class="group relative hover-trigger">
+                <div class="aspect-[3/4] overflow-hidden bg-charcoal grayscale group-hover:grayscale-0 transition-all duration-500 border border-white/10">
+                    <!-- ZMIEŃ SRC NA SWOJE ZDJĘCIE -->
+                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover">
+                </div>
+                <div class="mt-6">
+                    <h3 class="text-2xl font-bold font-display">Mikołaj <span class="text-neon">UI</span></h3>
+                    <p class="text-xs font-mono text-gray-500 mt-1">FRONTEND & DESIGN</p>
+                    <p class="text-sm text-gray-400 mt-4 leading-relaxed">Odpowiedzialny za wizualną perfekcję i animacje, które przyciągają uwagę.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-12 border-t border-white/10 text-gray-600 text-xs mt-20">
+        &copy; 2025 OMEGA TEAM.
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
