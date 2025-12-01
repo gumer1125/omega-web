@@ -523,24 +523,23 @@
 
     <!-- FIXED ELEMENTS & MODALS -->
     
-    <!-- 1. Live Chat Button -->
-    <div class="fixed bottom-8 right-8 z-40">
-        <button class="w-14 h-14 bg-neon rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(0,255,163,0.4)] hover:scale-110 transition-transform text-black">
-            <i class="ph-bold ph-chat-teardrop-text text-2xl"></i>
-        </button>
-    </div>
 
-    <!-- 2. Cookie Console -->
-    <div id="cookieConsole" class="fixed bottom-4 left-4 z-50 bg-black border border-neon p-4 font-mono text-xs max-w-sm shadow-2xl hidden">
-        <div class="text-neon mb-2">> DETECTED_NEW_USER</div>
-        <p class="text-gray-300 mb-4">This site uses cookies to enhance system performance. Accept?</p>
-        <div class="flex gap-4">
-            <button onclick="this.parentElement.parentElement.remove()" class="text-white hover:text-neon hover:underline">[Y] ACCEPT</button>
-            <button onclick="this.parentElement.parentElement.remove()" class="text-gray-500 hover:text-white hover:underline">[N] DECLINE</button>
-        </div>
-    </div>
+        
+	<!-- COOKIE CONSOLE (Terminal Style) -->
+	<div id="cookieConsole" class="fixed bottom-4 left-4 z-[9999] bg-void border border-neon p-6 font-mono text-xs max-w-sm shadow-[0_0_20px_rgba(0,255,163,0.1)] translate-y-[150%] transition-transform duration-500">
+		<div class="text-neon mb-2 font-bold blink">> NEW_USER_DETECTED</div>
+		<p class="text-gray-300 mb-4 leading-relaxed">
+			System uses cookies to optimize performance modules. Accept protocol?
+		</p>
+		<div class="flex gap-4">
+			<button id="acceptCookies" class="text-black bg-neon px-4 py-2 font-bold hover:bg-white transition-colors">[Y] ACCEPT</button>
+			<button id="rejectCookies" class="text-gray-500 hover:text-white py-2 transition-colors">[N] DECLINE</button>
+		</div>
+	</div>
 
-    <!-- 3. Case Study Modal (Hidden) -->
+  
+
+    <!-- 2. Case Study Modal (Hidden) -->
     <div id="projectModal" class="fixed inset-0 z-[100] bg-void/95 backdrop-blur hidden overflow-y-auto">
         <button onclick="closeProject()" class="fixed top-6 right-6 text-white hover:text-neon z-[101]">
             <i class="ph-bold ph-x text-3xl"></i>

@@ -4,36 +4,54 @@ document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.classList.remove('no-js');
 
     // =========================================
-    // 1. MENU MOBILNE (NAPRAWIONE)
+    // 1. COOKIES (DODANO BRAKUJĄCĄ LOGIKĘ)
+    // =========================================
+    const cookieConsole = document.getElementById('cookieConsole');
+    const acceptBtn = document.getElementById('acceptCookies');
+    const rejectBtn = document.getElementById('rejectCookies');
+
+    // Sprawdź czy użytkownik już zaakceptował
+    if (!localStorage.getItem('cookiesAccepted') && cookieConsole) {
+        // Pokaż po 2 sekundach (usuń klasę przesunięcia w dół)
+        setTimeout(() => {
+            cookieConsole.classList.remove('translate-y-[150%]');
+        }, 2000);
+    }
+
+    if (acceptBtn) {
+        acceptBtn.addEventListener('click', () => {
+            localStorage.setItem('cookiesAccepted', 'true');
+            cookieConsole.classList.add('translate-y-[150%]'); // Schowaj
+        });
+    }
+
+    if (rejectBtn) {
+        rejectBtn.addEventListener('click', () => {
+            cookieConsole.classList.add('translate-y-[150%]'); // Schowaj tymczasowo
+        });
+    }
+
+    // =========================================
+    // 2. MENU MOBILNE
     // =========================================
     const mobileBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
     
-    // Sprawdzamy czy elementy istnieją, żeby uniknąć błędów
     if (mobileBtn && mobileMenu) {
         const mobileIcon = mobileBtn.querySelector('i');
         const mobileLinks = document.querySelectorAll('.mobile-link');
 
         mobileBtn.addEventListener('click', (e) => {
-            // Zapobiegamy bąbelkowaniu kliknięcia
             e.stopPropagation();
-            
             const isOpen = mobileMenu.classList.contains('opacity-100');
 
             if (!isOpen) {
                 // Otwórz
                 mobileMenu.classList.remove('pointer-events-none', 'opacity-0');
                 mobileMenu.classList.add('pointer-events-auto', 'opacity-100');
-                
-                // Zmień ikonę
-                if(mobileIcon) {
-                    mobileIcon.classList.remove('ph-list');
-                    mobileIcon.classList.add('ph-x');
-                }
-                
-                document.body.style.overflow = 'hidden'; // Zablokuj scroll
+                if(mobileIcon) { mobileIcon.classList.remove('ph-list'); mobileIcon.classList.add('ph-x'); }
+                document.body.style.overflow = 'hidden';
 
-                // Animacja linków
                 if (typeof gsap !== 'undefined') {
                     gsap.fromTo(mobileLinks, 
                         { y: 50, opacity: 0 },
@@ -41,14 +59,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     );
                 }
             } else {
-                // Zamknij
                 closeMobileMenu();
             }
         });
 
-        // Zamykanie po kliknięciu w link
+        // Zamykanie menu po kliknięciu + Uruchomienie przejścia
         mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
+            link.addEventListener('click', (e) => {
+                // Niech standardowa obsługa linków w sekcji ANIMACJA (niżej) zajmie się zmianą strony
+                // My tylko zamykamy menu wizualnie
                 closeMobileMenu();
             });
         });
@@ -56,52 +75,89 @@ document.addEventListener('DOMContentLoaded', () => {
         function closeMobileMenu() {
             mobileMenu.classList.remove('pointer-events-auto', 'opacity-100');
             mobileMenu.classList.add('pointer-events-none', 'opacity-0');
-            
-            if(mobileIcon) {
-                mobileIcon.classList.remove('ph-x');
-                mobileIcon.classList.add('ph-list');
-            }
-            
-            document.body.style.overflow = 'auto'; // Odblokuj scroll
+            if(mobileIcon) { mobileIcon.classList.remove('ph-x'); mobileIcon.classList.add('ph-list'); }
+            document.body.style.overflow = 'auto';
         }
     }
 
     // =========================================
-    // 2. ANIMACJA "DIGITAL SHUTTERS" (PASY)
+    // 3. ANIMACJA "DIGITAL SHUTTERS" (PASY)
     // =========================================
     const container = document.getElementById('transition-container');
     
     if (container) {
+        // Pasy są wpisane na sztywno w HTML, pobieramy je
         const bars = document.querySelectorAll('.transition-bar');
 
         // A. WEJŚCIE (Start Strony)
+        // Pasy w CSS mają translateY(0%) czyli zakrywają ekran. Zrzucamy je w dół.
         gsap.to(bars, {
-            y: '100%', duration: 0.8, stagger: 0.05, ease: "power4.inOut", delay: 0.2
+            y: '100%', 
+            duration: 0.8, 
+            stagger: 0.05, 
+            ease: "power4.inOut", 
+            delay: 0.2 // Małe opóźnienie żeby HTML się ułożył
         });
 
-        // B. WYJŚCIE (Kliknięcie)
+        // B. WYJŚCIE (Kliknięcie w link)
         const links = document.querySelectorAll('a');
         links.forEach(link => {
             link.addEventListener('click', (e) => {
-                // Jeśli to link z menu mobilnego, nie uruchamiaj animacji od razu (bo menu zasłania)
-                if (link.classList.contains('mobile-link')) return;
-
                 const href = link.getAttribute('href');
+                
+                // Ignoruj puste, kotwice, mailto itp.
                 if (!href || href.startsWith('#') || href.startsWith('mailto:') || link.target === '_blank') return;
 
                 e.preventDefault();
 
+                // 1. Reset pasów na górę (nad ekran)
                 gsap.set(bars, { y: '-100%' });
+
+                // 2. Zrzut pasów w dół (zakrycie ekranu)
                 gsap.to(bars, {
-                    y: '0%', duration: 0.8, stagger: 0.05, ease: "power4.inOut",
-                    onComplete: () => { window.location.href = href; }
+                    y: '0%', 
+                    duration: 0.8, 
+                    stagger: 0.05, 
+                    ease: "power4.inOut",
+                    onComplete: () => { 
+                        window.location.href = href; 
+                    }
                 });
             });
         });
     }
 
     // =========================================
-    // 3. RESZTA FUNKCJI
+    // 4. PRELOADER (Tylko Index)
+    // =========================================
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        const progress = document.getElementById('progress-bar');
+        const percent = document.getElementById('percent');
+        let width = 0;
+        const interval = setInterval(() => {
+            width += Math.random() * 10;
+            if (width > 100) width = 100;
+            if (progress) progress.style.width = width + '%';
+            if (percent) percent.innerText = Math.floor(width) + '%';
+            if (width >= 100) {
+                clearInterval(interval);
+                gsap.to(preloader, { 
+                    opacity: 0, duration: 0.5, 
+                    onComplete: () => {
+                        preloader.style.display = 'none';
+                        gsap.to(".reveal-text", { opacity: 1, y: 0, duration: 1 });
+                    }
+                });
+            }
+        }, 50);
+    } else {
+        // Na podstronach pokaż tekst od razu (po animacji pasów)
+        gsap.to(".reveal-text", { opacity: 1, y: 0, duration: 1, delay: 0.2 });
+    }
+
+    // =========================================
+    // 5. POZOSTAŁE FUNKCJE (Standard)
     // =========================================
 
     // KURSOR
@@ -132,33 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(raf);
     }
 
-    // PRELOADER
-    const preloader = document.getElementById('preloader');
-    if (preloader) {
-        const progress = document.getElementById('progress-bar');
-        const percent = document.getElementById('percent');
-        let width = 0;
-        const interval = setInterval(() => {
-            width += Math.random() * 10;
-            if (width > 100) width = 100;
-            if (progress) progress.style.width = width + '%';
-            if (percent) percent.innerText = Math.floor(width) + '%';
-            if (width >= 100) {
-                clearInterval(interval);
-                gsap.to(preloader, { 
-                    opacity: 0, duration: 0.5, 
-                    onComplete: () => {
-                        preloader.style.display = 'none';
-                        gsap.to(".reveal-text", { opacity: 1, y: 0, duration: 1 });
-                    }
-                });
-            }
-        }, 50);
-    } else {
-        gsap.to(".reveal-text", { opacity: 1, y: 0, duration: 1, delay: 0.2 });
-    }
-
-    // CANVAS (Tylko index)
+    // CANVAS (Tylko Index)
     const canvas = document.getElementById('heroCanvas');
     if (canvas) {
         const ctx = canvas.getContext('2d');
@@ -253,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // UTILS
     window.copyToClipboard = function(text) { navigator.clipboard.writeText(text); alert('Skopiowano: ' + text); }
+    
     window.toggleFaq = function(header) {
         const content = header.nextElementSibling;
         const icon = header.querySelector('i');
@@ -262,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
             content.style.height = "0px"; icon.classList.remove('rotate-45'); icon.style.color = "white";
         }
     }
+    
     window.openProject = function(id) {
         const modal = document.getElementById('projectModal');
         if (!modal) return;
@@ -269,10 +301,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (title) title.innerText = id === 'noir' ? 'Noir Boutique' : 'Arch Studio';
         modal.classList.remove('hidden'); document.body.style.overflow = 'hidden';
     }
+    
     window.closeProject = function() {
         const modal = document.getElementById('projectModal');
         if (modal) modal.classList.add('hidden'); document.body.style.overflow = 'auto';
     }
+    
+    const scrollProgress = document.getElementById("scrollProgress");
+    if (scrollProgress) {
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            scrollProgress.style.width = scrolled + "%";
+        });
+    }
+    
     const contrastToggle = document.getElementById('contrastToggle');
     if (contrastToggle) {
         contrastToggle.addEventListener('click', () => {
@@ -281,4 +325,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-}); // KONIEC DOMContentLoaded
+});

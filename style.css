@@ -4,18 +4,20 @@
     --void: #050505;
 }
 
-/* Pasy animacji */
-.transition-bar {
-    height: 100%;
-    width: 100%; /* Wypełni flex container */
-    background-color: #050505; /* Kolor tła strony (Void) */
-    transform: translateY(-100%); /* Domyślnie schowane na górze */
-    border-right: 1px solid rgba(255, 255, 255, 0.05); /* Subtelna linia podziału */
-    position: relative;
+html.lenis {
+    height: auto;
+}
+.lenis.lenis-smooth {
+    scroll-behavior: auto;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+    overflow: hidden;
 }
 
-/* Opcjonalnie: zielony pasek na dole każdego słupka dla efektu skanera */
-/* Pasy animacji */
+/* Pasy animacji (Digital Shutters) */
 .transition-bar {
     height: 100%;
     flex: 1; /* Każdy pas zajmuje równą szerokość */
@@ -37,7 +39,7 @@
     box-shadow: 0 0 15px var(--neon);
 }
 
-/* Zielony pasek na GÓRZE (Nowość) */
+/* Zielony pasek na GÓRZE */
 .transition-bar::before {
     content: '';
     position: absolute;
@@ -48,19 +50,6 @@
     background-color: var(--neon);
     box-shadow: 0 0 15px var(--neon);
     z-index: 10;
-}
-
-html.lenis {
-    height: auto;
-}
-.lenis.lenis-smooth {
-    scroll-behavior: auto;
-}
-.lenis.lenis-smooth [data-lenis-prevent] {
-    overscroll-behavior: contain;
-}
-.lenis.lenis-stopped {
-    overflow: hidden;
 }
 
 /* CUSTOM SCROLLBAR */
@@ -86,7 +75,7 @@ html.lenis {
     left: 0;
     transform: translate(-50%, -50%);
     border-radius: 50%;
-    z-index: 9999;
+    z-index: 10000; /* Najwyższy z-index */
     pointer-events: none;
 }
 .cursor-dot {
@@ -100,7 +89,6 @@ html.lenis {
     border: 1px solid rgba(255, 255, 255, 0.5);
     transition: width 0.2s, height 0.2s, background-color 0.2s;
 }
-/* Magnet effect class */
 body.hovering .cursor-outline {
     width: 60px;
     height: 60px;
