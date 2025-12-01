@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 | System Failure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { colors: { 'neon': '#00FFA3', 'void': '#050505' }, fontFamily: { display: ['Syne'], mono: ['JetBrains Mono'] } } } }
+    </script>
+</head>
+<body class="bg-void text-white h-screen flex flex-col items-center justify-center overflow-hidden selection:bg-neon selection:text-black">
+    
+    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none"></div>
+
+    <h1 class="text-[15vw] font-display font-bold leading-none text-transparent stroke-text" style="-webkit-text-stroke: 2px #333;">404</h1>
+    
+    <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
+        <p class="text-neon font-mono text-sm mb-4 tracking-widest animate-pulse">/// SYSTEM_ERROR</p>
+        <h2 class="text-4xl md:text-6xl font-display font-bold mb-8 text-center">PAGE_NOT_FOUND</h2>
+        <a href="index.html" class="px-8 py-3 border border-neon text-neon font-mono hover:bg-neon hover:text-black transition-all">
+            < WRÓĆ DO BAZY
+        </a>
+    </div>
+
+</body>
+</html>
