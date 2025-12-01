@@ -4,57 +4,104 @@ document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.classList.remove('no-js');
 
     // =========================================
-    // 1. ANIMACJA "DIGITAL SHUTTERS" (BEZ MRUGANIA)
+    // 1. MENU MOBILNE (NAPRAWIONE)
+    // =========================================
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    // Sprawdzamy czy elementy istnieją, żeby uniknąć błędów
+    if (mobileBtn && mobileMenu) {
+        const mobileIcon = mobileBtn.querySelector('i');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        mobileBtn.addEventListener('click', (e) => {
+            // Zapobiegamy bąbelkowaniu kliknięcia
+            e.stopPropagation();
+            
+            const isOpen = mobileMenu.classList.contains('opacity-100');
+
+            if (!isOpen) {
+                // Otwórz
+                mobileMenu.classList.remove('pointer-events-none', 'opacity-0');
+                mobileMenu.classList.add('pointer-events-auto', 'opacity-100');
+                
+                // Zmień ikonę
+                if(mobileIcon) {
+                    mobileIcon.classList.remove('ph-list');
+                    mobileIcon.classList.add('ph-x');
+                }
+                
+                document.body.style.overflow = 'hidden'; // Zablokuj scroll
+
+                // Animacja linków
+                if (typeof gsap !== 'undefined') {
+                    gsap.fromTo(mobileLinks, 
+                        { y: 50, opacity: 0 },
+                        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }
+                    );
+                }
+            } else {
+                // Zamknij
+                closeMobileMenu();
+            }
+        });
+
+        // Zamykanie po kliknięciu w link
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                closeMobileMenu();
+            });
+        });
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('pointer-events-auto', 'opacity-100');
+            mobileMenu.classList.add('pointer-events-none', 'opacity-0');
+            
+            if(mobileIcon) {
+                mobileIcon.classList.remove('ph-x');
+                mobileIcon.classList.add('ph-list');
+            }
+            
+            document.body.style.overflow = 'auto'; // Odblokuj scroll
+        }
+    }
+
+    // =========================================
+    // 2. ANIMACJA "DIGITAL SHUTTERS" (PASY)
     // =========================================
     const container = document.getElementById('transition-container');
     
     if (container) {
-        // Pobieramy pasy, które już są w HTML (nie generujemy ich, żeby nie mrugało)
         const bars = document.querySelectorAll('.transition-bar');
 
-        // A. ANIMACJA WEJŚCIA (Start Strony)
-        // Pasy są ustawione w CSS na translateY(0%) - czyli ZAKRYWAJĄ ekran.
-        // My je teraz zrzucamy w dół (odsłaniamy treść).
-        
+        // A. WEJŚCIE (Start Strony)
         gsap.to(bars, {
-            y: '100%', // Zjazd w dół
-            duration: 0.8,
-            stagger: 0.05, // Efekt fali
-            ease: "power4.inOut",
-            delay: 0.2 // Krótkie opóźnienie dla stabilności
+            y: '100%', duration: 0.8, stagger: 0.05, ease: "power4.inOut", delay: 0.2
         });
 
-        // B. ANIMACJA WYJŚCIA (Kliknięcie w link)
+        // B. WYJŚCIE (Kliknięcie)
         const links = document.querySelectorAll('a');
         links.forEach(link => {
             link.addEventListener('click', (e) => {
+                // Jeśli to link z menu mobilnego, nie uruchamiaj animacji od razu (bo menu zasłania)
+                if (link.classList.contains('mobile-link')) return;
+
                 const href = link.getAttribute('href');
-                
-                // Ignorujemy puste linki, kotwice, mailto itp.
                 if (!href || href.startsWith('#') || href.startsWith('mailto:') || link.target === '_blank') return;
 
                 e.preventDefault();
 
-                // 1. SZYBKI RESET: Przenosimy pasy nad ekran (są niewidoczne, bo strona jest odsłonięta)
                 gsap.set(bars, { y: '-100%' });
-
-                // 2. ANIMACJA: Pasy spadają z góry na dół, ZAKRYWAJĄC ekran
                 gsap.to(bars, {
-                    y: '0%', // Pozycja zakrywająca
-                    duration: 0.8,
-                    stagger: 0.05,
-                    ease: "power4.inOut",
-                    onComplete: () => {
-                        // Dopiero jak jest czarno, zmieniamy stronę
-                        window.location.href = href;
-                    }
+                    y: '0%', duration: 0.8, stagger: 0.05, ease: "power4.inOut",
+                    onComplete: () => { window.location.href = href; }
                 });
             });
         });
     }
 
     // =========================================
-    // 2. RESZTA KODU (BEZ ZMIAN)
+    // 3. RESZTA FUNKCJI
     // =========================================
 
     // KURSOR
@@ -98,10 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (percent) percent.innerText = Math.floor(width) + '%';
             if (width >= 100) {
                 clearInterval(interval);
-                // Preloader znika
                 gsap.to(preloader, { 
-                    opacity: 0, 
-                    duration: 0.5, 
+                    opacity: 0, duration: 0.5, 
                     onComplete: () => {
                         preloader.style.display = 'none';
                         gsap.to(".reveal-text", { opacity: 1, y: 0, duration: 1 });
@@ -113,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gsap.to(".reveal-text", { opacity: 1, y: 0, duration: 1, delay: 0.2 });
     }
 
-    // CANVAS
+    // CANVAS (Tylko index)
     const canvas = document.getElementById('heroCanvas');
     if (canvas) {
         const ctx = canvas.getContext('2d');
@@ -205,6 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+
+    // UTILS
     window.copyToClipboard = function(text) { navigator.clipboard.writeText(text); alert('Skopiowano: ' + text); }
     window.toggleFaq = function(header) {
         const content = header.nextElementSibling;
@@ -226,15 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('projectModal');
         if (modal) modal.classList.add('hidden'); document.body.style.overflow = 'auto';
     }
-    const scrollProgress = document.getElementById("scrollProgress");
-    if (scrollProgress) {
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            scrollProgress.style.width = scrolled + "%";
-        });
-    }
     const contrastToggle = document.getElementById('contrastToggle');
     if (contrastToggle) {
         contrastToggle.addEventListener('click', () => {
@@ -242,4 +280,5 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('img, video').forEach(el => el.classList.toggle('invert'));
         });
     }
-});
+
+}); // KONIEC DOMContentLoaded

@@ -93,39 +93,38 @@
     </div>
 
     
-<!-- NAV (Zaktualizowana o przycisk mobilny) -->
-    <nav class="fixed top-0 w-full z-50 mix-blend-difference text-white py-6">
+    
+<!-- NAV (Z-Index podniesiony do 100, żeby nic go nie zasłaniało) -->
+    <nav class="fixed top-0 w-full z-[100] mix-blend-difference text-white py-6">
         <div class="max-w-[1600px] mx-auto px-6 flex justify-between items-center">
             
             <!-- Logo -->
-            <a href="index.html" class="text-2xl font-display font-bold tracking-tighter hover-trigger relative z-[60]">OMEGA<span class="text-neon">.</span></a>
+            <a href="index.html" class="text-2xl font-display font-bold tracking-tighter hover-trigger relative z-[101]">OMEGA<span class="text-neon">.</span></a>
             
-            <!-- Desktop Menu (Ukryte na mobile) -->
-            <div class="hidden md:flex gap-8 font-mono text-xs uppercase tracking-widest">
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex gap-8 font-mono text-xs uppercase tracking-widest relative z-[101]">
                 <a href="index.html" class="hover:text-neon transition-colors">Start</a>
                 <a href="onas.html" class="hover:text-neon transition-colors">O Nas</a>
                 <a href="przyk.html" class="hover:text-neon transition-colors">Realizacje</a>
             </div>
 
-            <div class="flex items-center gap-4">
-                <!-- Przycisk Wycena (Widoczny zawsze) -->
-                <a href="index.html#calculator" class="hidden xs:block px-4 py-2 border border-white/30 rounded-full text-[10px] font-bold uppercase hover:bg-neon hover:text-black hover:border-neon transition-all relative z-[60]">
+            <div class="flex items-center gap-4 relative z-[101]">
+                <!-- Przycisk Wycena -->
+                <a href="index.html#calculator" class="hidden xs:block px-4 py-2 border border-white/30 rounded-full text-[10px] font-bold uppercase hover:bg-neon hover:text-black hover:border-neon transition-all cursor-pointer">
                     Wycena
                 </a>
 
-                <!-- HAMBURGER BUTTON (Tylko na mobile) -->
-                <button id="mobile-menu-btn" class="md:hidden text-2xl relative z-[60] focus:outline-none">
+                <!-- HAMBURGER BUTTON (Naprawiony) -->
+                <button id="mobile-menu-btn" class="md:hidden text-2xl focus:outline-none cursor-pointer p-2">
                     <i class="ph-bold ph-list transition-transform duration-300"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- MOBILE MENU OVERLAY (Pełny ekran) -->
-    <div id="mobile-menu" class="fixed inset-0 z-[55] bg-void flex flex-col justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
-        <!-- Tło z siatką (Opcjonalne) -->
+    <!-- MOBILE MENU OVERLAY -->
+    <div id="mobile-menu" class="fixed inset-0 z-[90] bg-void flex flex-col justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-        
         <div class="flex flex-col gap-8 text-center relative z-10">
             <a href="index.html" class="mobile-link text-5xl font-display font-bold text-white hover:text-neon transition-colors">START</a>
             <a href="onas.html" class="mobile-link text-5xl font-display font-bold text-white hover:text-neon transition-colors">O NAS</a>
